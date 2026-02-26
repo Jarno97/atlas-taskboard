@@ -356,7 +356,7 @@ export default function KanbanBoard() {
                       <select
                         value={task.assignee || ""}
                         onChange={(e) => updateStatus(task.id, task.status, e.target.value as any)}
-                        className="text-xs bg-transparent text-zinc-400 hover:text-white cursor-pointer"
+                        className="text-xs bg-zinc-700 text-zinc-300 hover:text-white cursor-pointer rounded px-1 py-0.5"
                       >
                         <option value="">Assign</option>
                         <option value="Atlas">Atlas</option>
@@ -365,7 +365,7 @@ export default function KanbanBoard() {
                       <select
                         value={task.status}
                         onChange={(e) => updateStatus(task.id, e.target.value)}
-                        className="text-xs bg-transparent text-zinc-400 hover:text-white cursor-pointer"
+                        className="text-xs bg-zinc-700 text-zinc-300 hover:text-white cursor-pointer rounded px-1 py-0.5"
                       >
                         <option value="todo">New</option>
                         <option value="queued">Queued</option>
