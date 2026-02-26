@@ -167,6 +167,7 @@ export default function KanbanBoard() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; id: string; title: string }>({ show: false, id: "", title: "" });
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [filterAssignee, setFilterAssignee] = useState<"all" | "Atlas" | "Jarno">("all");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   const fetchTasks = async () => {
@@ -282,6 +283,18 @@ export default function KanbanBoard() {
           <option value="Atlas">My tasks</option>
           <option value="Jarno">Jarno's</option>
         </select>
+        <select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          className="bg-zinc-800 text-white rounded-lg px-3 py-2 border border-zinc-700 focus:outline-none text-sm"
+        >
+          <option value="all">All Projects</option>
+          <option value="general">General</option>
+          <option value="taskboard">Taskboard</option>
+          <option value="website">Website</option>
+          <option value="automation">Automation</option>
+          <option value="research">Research</option>
+        </select>
       </div>
 
       <div className="flex flex-nowrap gap-3 pb-4">
@@ -304,6 +317,10 @@ export default function KanbanBoard() {
                 .filter((task) => {
                   if (filterAssignee === "all") return true;
                   return task.assignee === filterAssignee;
+                })
+                .filter((task) => {
+                  if (filterCategory === "all") return true;
+                  return task.category === filterCategory;
                 })
                 .filter((task) => {
                   if (!searchQuery) return true;
