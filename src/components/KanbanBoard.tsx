@@ -252,7 +252,7 @@ export default function KanbanBoard() {
     return (
       <div className="flex flex-col sm:flex-row gap-3 pb-4 overflow-x-auto">
         {columns.map((col) => (
-          <div key={col.id} className="w-full sm:w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4 flex-shrink-0">
+          <div key={col.id} className="w-full sm:w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4 md:p-5 flex-shrink-0">
             <div className="h-6 w-20 bg-zinc-700 rounded animate-pulse mb-4"></div>
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
@@ -319,11 +319,11 @@ export default function KanbanBoard() {
             key={column.id}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column.id)}
-            className={`w-full sm:flex-shrink-0 sm:w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
+            className={`w-full sm:flex-shrink-0 sm:w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4 md:p-5 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-white">{column.label}</h3>
-              <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-1 rounded-full">
+              <span className="text-sm text-zinc-500 bg-zinc-700 px-2 py-1 rounded-full">
                 {tasks.filter((t) => t.status === column.id && (filterAssignee === "all" || t.assignee === filterAssignee) && (!searchQuery || t.title.toLowerCase().includes(searchQuery.toLowerCase()))).length}
               </span>
             </div>
@@ -352,7 +352,7 @@ export default function KanbanBoard() {
                     animate={{ opacity: 1, y: 0 }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`task-card bg-zinc-800 rounded-lg p-4 border border-zinc-700 hover:border-zinc-600 transition-colors cursor-grab active:cursor-grabbing group ${
+                    className={`task-card bg-zinc-800 rounded-lg p-4 md:p-5 border border-zinc-700 hover:border-zinc-600 transition-colors cursor-grab active:cursor-grabbing group ${
                       draggedTask === task.id ? "opacity-50" : ""
                     }`}
                   >
@@ -378,14 +378,14 @@ export default function KanbanBoard() {
                     </div>
                     
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-0.5 rounded">
+                      <span className="text-sm text-zinc-500 bg-zinc-700 px-2 py-0.5 rounded">
                         {task.category}
                       </span>
                       <select
                         value={task.assignee || ""}
                         onChange={(e) => updateStatus(task.id, task.status, e.target.value as any)}
                         style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}
-                        className="text-xs cursor-pointer rounded px-1 py-0.5 border-none"
+                        className="text-sm cursor-pointer rounded px-2 py-1.5 border-none"
                       >
                         <option value="" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>Assign</option>
                         <option value="Atlas" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>Atlas</option>
@@ -395,7 +395,7 @@ export default function KanbanBoard() {
                         value={task.status}
                         onChange={(e) => updateStatus(task.id, e.target.value)}
                         style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}
-                        className="text-xs cursor-pointer rounded px-1 py-0.5 border-none"
+                        className="text-sm cursor-pointer rounded px-2 py-1.5 border-none"
                       >
                         <option value="todo" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>New</option>
                         <option value="queued" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>Queued</option>
