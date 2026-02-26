@@ -248,7 +248,22 @@ export default function KanbanBoard() {
     setDraggedTask(null);
   };
 
-  if (loading) return <div className="p-4 text-zinc-400">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex flex-nowrap gap-3 pb-4">
+        {columns.map((col) => (
+          <div key={col.id} className="flex-shrink-0 w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4">
+            <div className="h-6 w-20 bg-zinc-700 rounded animate-pulse mb-4"></div>
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-24 bg-zinc-800 rounded-lg animate-pulse"></div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <>
