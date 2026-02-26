@@ -1,26 +1,14 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-
-const dataFile = path.join(process.cwd(), "data", "tasks.json");
-
-function readTasks() {
-  const data = fs.readFileSync(dataFile, "utf-8");
-  return JSON.parse(data).tasks;
-}
-
-function writeTasks(tasks: any[]) {
-  fs.writeFileSync(dataFile, JSON.stringify({ tasks }, null, 2));
-}
+import { getTasks, setTasks } from "@/lib/redis";
 
 export async function GET() {
-  const tasks = readTasks();
+  const tasks = await getTasks();
   return NextResponse.json(tasks);
 }
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const tasks = readTasks();
+  const tasks = await getTasks();
   
   const newTask = {
     id: Date.now().toString(),
@@ -34,14 +22,14 @@ export async function POST(request: Request) {
   };
   
   tasks.push(newTask);
-  writeTasks(tasks);
+  await setTasks(tasks);
   
   return NextResponse.json(newTask, { status: 201 });
 }
 
 export async function PUT(request: Request) {
   const body = await request.json();
-  const tasks = readTasks();
+  let tasks = await getTasks();
   
   const index = tasks.findIndex((t: any) => t.id === body.id);
   if (index === -1) {
@@ -54,7 +42,7 @@ export async function PUT(request: Request) {
     updated: new Date().toISOString(),
   };
   
-  writeTasks(tasks);
+  await setTasks(tasks);
   return NextResponse.json(tasks[index]);
 }
 
@@ -66,9 +54,9 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "ID required" }, { status: 400 });
   }
   
-  let tasks = readTasks();
+  let tasks = await getTasks();
   tasks = tasks.filter((t: any) => t.id !== id);
-  writeTasks(tasks);
+  await setTasks(tasks);
   
   return NextResponse.json({ success: true });
 }
