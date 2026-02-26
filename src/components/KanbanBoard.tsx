@@ -167,7 +167,7 @@ export default function KanbanBoard() {
                     key={task.id}
                     draggable
                     onDragStart={(e) => handleDragStart(e, task.id)}
-                    className={`bg-zinc-800 rounded-lg p-4 border border-zinc-700 hover:border-zinc-600 transition-colors cursor-grab active:cursor-grabbing group ${
+                    className={`task-card bg-zinc-800 rounded-lg p-4 border border-zinc-700 hover:border-zinc-600 transition-colors cursor-grab active:cursor-grabbing group ${
                       draggedTask === task.id ? "opacity-50" : ""
                     }`}
                   >
