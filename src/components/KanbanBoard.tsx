@@ -9,9 +9,11 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
+  useDroppable,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -42,6 +44,37 @@ const priorityColors = {
   medium: "bg-yellow-500",
   low: "bg-green-500",
 };
+
+function DroppableColumn({ 
+  id, 
+  children,
+  count 
+}: { 
+  id: string; 
+  children: React.ReactNode;
+  count: number;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`flex-shrink-0 w-full lg:w-72 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${
+        columns.find(c => c.id === id)?.color
+      } ${isOver ? 'ring-2 ring-blue-500 ring-inset' : ''}`}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-white">{columns.find(c => c.id === id)?.label}</h3>
+        <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-1 rounded-full">
+          {count}
+        </span>
+      </div>
+      <div className="space-y-3 min-h-[200px]">
+        {children}
+      </div>
+    </div>
+  );
+}
 
 function SortableTask({ task, onDelete }: { task: Task; onDelete: (id: string) => void }) {
   const {
@@ -96,6 +129,7 @@ function SortableTask({ task, onDelete }: { task: Task; onDelete: (id: string) =
 export default function KanbanBoard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -125,7 +159,6 @@ export default function KanbanBoard() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, status }),
     });
-    fetchTasks();
   };
 
   const deleteTask = async (id: string) => {
@@ -133,16 +166,27 @@ export default function KanbanBoard() {
     fetchTasks();
   };
 
+  function handleDragStart(event: DragStartEvent) {
+    setActiveId(event.active.id as string);
+  }
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
+    setActiveId(null);
 
     if (!over) return;
 
     const taskId = active.id as string;
-    const newStatus = over.id as string;
-
-    if (newStatus === "todo" || newStatus === "in-progress" || newStatus === "review" || newStatus === "done") {
-      updateStatus(taskId, newStatus);
+    const task = tasks.find(t => t.id === taskId);
+    
+    // Check if we dropped on a column
+    const overId = over.id as string;
+    const isColumn = columns.some(col => col.id === overId);
+    
+    if (isColumn && task && task.status !== overId) {
+      updateStatus(taskId, overId).then(() => {
+        fetchTasks();
+      });
     }
   }
 
@@ -152,40 +196,35 @@ export default function KanbanBoard() {
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       <div className="flex flex-col lg:flex-row gap-4 overflow-x-auto pb-4">
         {columns.map((column) => (
-          <div
-            key={column.id}
-            className={`flex-shrink-0 w-full lg:w-72 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color}`}
+          <DroppableColumn 
+            key={column.id} 
+            id={column.id}
+            count={tasks.filter((t) => t.status === column.id).length}
           >
-            {/* Column header */}
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-white">{column.label}</h3>
-              <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-1 rounded-full">
-                {tasks.filter((t) => t.status === column.id).length}
-              </span>
-            </div>
-
-            {/* Tasks */}
             <SortableContext
               items={tasks.filter((t) => t.status === column.id).map((t) => t.id)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="space-y-3 min-h-[200px]" data-status={column.id}>
-                {tasks
-                  .filter((task) => task.status === column.id)
-                  .map((task) => (
-                    <SortableTask key={task.id} task={task} onDelete={deleteTask} />
-                  ))}
+              {tasks
+                .filter((task) => task.status === column.id)
+                .map((task) => (
+                  <SortableTask 
+                    key={task.id} 
+                    task={task} 
+                    onDelete={deleteTask} 
+                  />
+                ))}
 
-                {tasks.filter((t) => t.status === column.id).length === 0 && (
-                  <p className="text-zinc-600 text-sm text-center py-8">Drop tasks here</p>
-                )}
-              </div>
+              {tasks.filter((t) => t.status === column.id).length === 0 && (
+                <p className="text-zinc-600 text-sm text-center py-8">Drop tasks here</p>
+              )}
             </SortableContext>
-          </div>
+          </DroppableColumn>
         ))}
       </div>
     </DndContext>
