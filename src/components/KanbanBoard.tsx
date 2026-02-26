@@ -15,8 +15,8 @@ interface Task {
 }
 
 const columns = [
+  { id: "todo", label: "New", color: "border-zinc-500" },
   { id: "queued", label: "Queued", color: "border-zinc-400" },
-  { id: "todo", label: "To Do", color: "border-zinc-500" },
   { id: "in-progress", label: "In Progress", color: "border-blue-500" },
   { id: "review", label: "Review", color: "border-yellow-500" },
   { id: "done", label: "Done", color: "border-green-500" },
@@ -216,8 +216,8 @@ export default function KanbanBoard() {
                         onChange={(e) => updateStatus(task.id, e.target.value)}
                         className="text-xs bg-transparent text-zinc-400 hover:text-white cursor-pointer"
                       >
+                        <option value="todo">New</option>
                         <option value="queued">Queued</option>
-                        <option value="todo">To Do</option>
                         <option value="in-progress">In Progress</option>
                         <option value="review">Review</option>
                         <option value="done">Done</option>
