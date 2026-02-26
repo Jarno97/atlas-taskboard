@@ -9,6 +9,7 @@ interface Task {
   status: "todo" | "in-progress" | "review" | "done";
   priority: "high" | "medium" | "low";
   category: string;
+  assignee: "Atlas" | "Jarno" | null;
   created: string;
   updated: string;
 }
@@ -90,11 +91,14 @@ export default function KanbanBoard() {
     return () => clearInterval(interval);
   }, []);
 
-  const updateStatus = async (id: string, status: string) => {
+  const updateStatus = async (id: string, status: string, assignee?: string) => {
+    const updates: any = { status };
+    if (assignee !== undefined) updates.assignee = assignee || null;
+    
     await fetch("/api/tasks", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status }),
+      body: JSON.stringify({ id, ...updates }),
     });
     fetchTasks();
   };
@@ -188,15 +192,23 @@ export default function KanbanBoard() {
                       <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-0.5 rounded">
                         {task.category}
                       </span>
+                      {task.assignee && (
+                        <span className={`text-xs px-2 py-0.5 rounded font-medium ${
+                          task.assignee === "Atlas" 
+                            ? "bg-blue-500/20 text-blue-400" 
+                            : "bg-purple-500/20 text-purple-400"
+                        }`}>
+                          {task.assignee}
+                        </span>
+                      )}
                       <select
-                        value={task.status}
-                        onChange={(e) => updateStatus(task.id, e.target.value)}
+                        value={task.assignee || ""}
+                        onChange={(e) => updateStatus(task.id, task.status, e.target.value as any)}
                         className="text-xs bg-transparent text-zinc-400 hover:text-white cursor-pointer ml-auto"
                       >
-                        <option value="todo">To Do</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="review">Review</option>
-                        <option value="done">Done</option>
+                        <option value="">Assign</option>
+                        <option value="Atlas">Atlas</option>
+                        <option value="Jarno">Jarno</option>
                       </select>
                     </div>
                   </div>

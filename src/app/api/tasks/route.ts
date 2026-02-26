@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getTasks, setTasks } from "@/lib/redis";
 
+const TASK_KEY = "tasks";
+
 export async function GET() {
   const tasks = await getTasks();
   return NextResponse.json(tasks);
@@ -17,6 +19,7 @@ export async function POST(request: Request) {
     status: "todo",
     priority: body.priority || "medium",
     category: body.category || "general",
+    assignee: body.assignee || null,
     created: new Date().toISOString(),
     updated: new Date().toISOString(),
   };
