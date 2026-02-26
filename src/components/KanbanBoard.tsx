@@ -250,9 +250,9 @@ export default function KanbanBoard() {
 
   if (loading) {
     return (
-      <div className="flex flex-nowrap gap-3 pb-4">
+      <div className="flex flex-col sm:flex-row gap-3 pb-4 overflow-x-auto">
         {columns.map((col) => (
-          <div key={col.id} className="flex-shrink-0 w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4">
+          <div key={col.id} className="w-full sm:w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4 flex-shrink-0">
             <div className="h-6 w-20 bg-zinc-700 rounded animate-pulse mb-4"></div>
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
@@ -313,13 +313,13 @@ export default function KanbanBoard() {
         </select>
       </div>
 
-      <div className="flex flex-nowrap gap-3 pb-4">
+      <div className="flex flex-col sm:flex-row gap-3 pb-4 overflow-x-auto">
         {columns.map((column) => (
           <div
             key={column.id}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column.id)}
-            className={`flex-shrink-0 w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
+            className={`w-full sm:flex-shrink-0 sm:w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-white">{column.label}</h3>
