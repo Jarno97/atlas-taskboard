@@ -356,22 +356,24 @@ export default function KanbanBoard() {
                       <select
                         value={task.assignee || ""}
                         onChange={(e) => updateStatus(task.id, task.status, e.target.value as any)}
-                        className="text-xs bg-zinc-700 text-zinc-300 hover:text-white cursor-pointer rounded px-1 py-0.5"
+                        style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}
+                        className="text-xs cursor-pointer rounded px-1 py-0.5 border-none"
                       >
-                        <option value="">Assign</option>
-                        <option value="Atlas">Atlas</option>
-                        <option value="Jarno">Jarno</option>
+                        <option value="" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>Assign</option>
+                        <option value="Atlas" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>Atlas</option>
+                        <option value="Jarno" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>Jarno</option>
                       </select>
                       <select
                         value={task.status}
                         onChange={(e) => updateStatus(task.id, e.target.value)}
-                        className="text-xs bg-zinc-700 text-zinc-300 hover:text-white cursor-pointer rounded px-1 py-0.5"
+                        style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}
+                        className="text-xs cursor-pointer rounded px-1 py-0.5 border-none"
                       >
-                        <option value="todo">New</option>
-                        <option value="queued">Queued</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="review">Review</option>
-                        <option value="done">Done</option>
+                        <option value="todo" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>New</option>
+                        <option value="queued" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>Queued</option>
+                        <option value="in-progress" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>In Progress</option>
+                        <option value="review" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>Review</option>
+                        <option value="done" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>Done</option>
                       </select>
                     </div>
                   </div>
