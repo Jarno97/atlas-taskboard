@@ -149,13 +149,13 @@ export default function KanbanBoard() {
         onCancel={() => setDeleteConfirm({ show: false, id: "", title: "" })}
       />
 
-      <div className={`flex flex-col lg:flex-row gap-4 pb-4 ${draggedTask ? 'overflow-visible' : 'overflow-x-auto'}`}>
+      <div className="flex flex-nowrap gap-3 pb-4">
         {columns.map((column) => (
           <div
             key={column.id}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column.id)}
-            className={`flex-shrink-0 w-full lg:w-80 xl:w-84 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
+            className={`flex-shrink-0 w-56 sm:w-64 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-white">{column.label}</h3>
