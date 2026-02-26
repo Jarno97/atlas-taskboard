@@ -6,7 +6,7 @@ interface Task {
   id: string;
   title: string;
   description: string;
-  status: "todo" | "in-progress" | "review" | "done";
+  status: "queued" | "todo" | "in-progress" | "review" | "done";
   priority: "high" | "medium" | "low";
   category: string;
   assignee: "Atlas" | "Jarno" | null;
@@ -15,6 +15,7 @@ interface Task {
 }
 
 const columns = [
+  { id: "queued", label: "Queued", color: "border-zinc-400" },
   { id: "todo", label: "To Do", color: "border-zinc-500" },
   { id: "in-progress", label: "In Progress", color: "border-blue-500" },
   { id: "review", label: "Review", color: "border-yellow-500" },
@@ -204,11 +205,22 @@ export default function KanbanBoard() {
                       <select
                         value={task.assignee || ""}
                         onChange={(e) => updateStatus(task.id, task.status, e.target.value as any)}
-                        className="text-xs bg-transparent text-zinc-400 hover:text-white cursor-pointer ml-auto"
+                        className="text-xs bg-transparent text-zinc-400 hover:text-white cursor-pointer"
                       >
                         <option value="">Assign</option>
                         <option value="Atlas">Atlas</option>
                         <option value="Jarno">Jarno</option>
+                      </select>
+                      <select
+                        value={task.status}
+                        onChange={(e) => updateStatus(task.id, e.target.value)}
+                        className="text-xs bg-transparent text-zinc-400 hover:text-white cursor-pointer"
+                      >
+                        <option value="queued">Queued</option>
+                        <option value="todo">To Do</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="review">Review</option>
+                        <option value="done">Done</option>
                       </select>
                     </div>
                   </div>
