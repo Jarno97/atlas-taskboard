@@ -10,6 +10,7 @@ export default function AddTask({ onAdd }: AddTaskProps) {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("medium");
   const [category, setCategory] = useState("general");
+  const [assignee, setAssignee] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,7 +21,7 @@ export default function AddTask({ onAdd }: AddTaskProps) {
     await fetch("/api/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, priority, category }),
+      body: JSON.stringify({ title, priority, category, assignee: assignee || null }),
     });
     setTitle("");
     setLoading(false);
@@ -55,6 +56,15 @@ export default function AddTask({ onAdd }: AddTaskProps) {
         <option value="website">Website</option>
         <option value="automation">Automation</option>
         <option value="research">Research</option>
+      </select>
+      <select
+        value={assignee}
+        onChange={(e) => setAssignee(e.target.value)}
+        className="bg-zinc-800 text-white rounded-lg px-3 py-2 border border-zinc-700 focus:outline-none"
+      >
+        <option value="">Unassigned</option>
+        <option value="Atlas">Atlas</option>
+        <option value="Jarno">Jarno</option>
       </select>
       <button
         type="submit"
