@@ -71,11 +71,101 @@ function ConfirmDialog({
   );
 }
 
+function EditDialog({ 
+  isOpen, 
+  task, 
+  onSave, 
+  onCancel 
+}: { 
+  isOpen: boolean; 
+  task: Task | null; 
+  onSave: (title: string, priority: string, category: string) => void; 
+  onCancel: () => void;
+}) {
+  const [title, setTitle] = useState("");
+  const [priority, setPriority] = useState("medium");
+  const [category, setCategory] = useState("general");
+
+  useEffect(() => {
+    if (task) {
+      setTitle(task.title);
+      setPriority(task.priority);
+      setCategory(task.category);
+    }
+  }, [task]);
+
+  if (!isOpen || !task) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onCancel}
+      />
+      <div className="relative bg-zinc-800 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-zinc-700">
+        <h3 className="text-lg font-semibold text-white mb-4">Edit Task</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm text-zinc-400 mb-1">Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full bg-zinc-700 text-white rounded-lg px-4 py-2 border border-zinc-600 focus:outline-none focus:border-zinc-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-zinc-400 mb-1">Priority</label>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              className="w-full bg-zinc-700 text-white rounded-lg px-4 py-2 border border-zinc-600 focus:outline-none focus:border-zinc-400"
+            >
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm text-zinc-400 mb-1">Category</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full bg-zinc-700 text-white rounded-lg px-4 py-2 border border-zinc-600 focus:outline-none focus:border-zinc-400"
+            >
+              <option value="general">General</option>
+              <option value="taskboard">Taskboard</option>
+              <option value="website">Website</option>
+              <option value="automation">Automation</option>
+              <option value="research">Research</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex gap-3 mt-6">
+          <button
+            onClick={onCancel}
+            className="flex-1 px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => onSave(title, priority, category)}
+            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function KanbanBoard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [draggedTask, setDraggedTask] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; id: string; title: string }>({ show: false, id: "", title: "" });
+  const [editTask, setEditTask] = useState<Task | null>(null);
   const [filterAssignee, setFilterAssignee] = useState<"all" | "Atlas" | "Jarno">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -108,6 +198,22 @@ export default function KanbanBoard() {
 
   const confirmDelete = (id: string, title: string) => {
     setDeleteConfirm({ show: true, id, title });
+  };
+
+  const handleEdit = (task: Task) => {
+    setEditTask(task);
+  };
+
+  const handleSaveEdit = async (title: string, priority: string, category: string) => {
+    if (editTask) {
+      await fetch("/api/tasks", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: editTask.id, title, priority, category }),
+      });
+      fetchTasks();
+      setEditTask(null);
+    }
   };
 
   const handleDelete = async () => {
@@ -149,6 +255,13 @@ export default function KanbanBoard() {
         title={deleteConfirm.title}
         onConfirm={handleDelete}
         onCancel={() => setDeleteConfirm({ show: false, id: "", title: "" })}
+      />
+
+      <EditDialog
+        isOpen={!!editTask}
+        task={editTask}
+        onSave={handleSaveEdit}
+        onCancel={() => setEditTask(null)}
       />
 
       {/* Search and Filter */}
@@ -209,6 +322,14 @@ export default function KanbanBoard() {
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className={`w-2 h-2 rounded-full ${priorityColors[task.priority]} flex-shrink-0 mt-1.5`} />
                       <span className="text-white text-sm font-medium flex-1">{task.title}</span>
+                      <button
+                        onClick={() => handleEdit(task)}
+                        className="text-zinc-500 hover:text-blue-400 transition-opacity"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
                       <button
                         onClick={() => confirmDelete(task.id, task.title)}
                         className="text-zinc-500 hover:text-red-400 transition-opacity"
