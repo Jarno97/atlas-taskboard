@@ -155,7 +155,7 @@ export default function KanbanBoard() {
             key={column.id}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column.id)}
-            className={`flex-shrink-0 w-full lg:w-72 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
+            className={`flex-shrink-0 w-full lg:w-80 xl:w-84 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-white">{column.label}</h3>

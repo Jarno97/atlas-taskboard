@@ -13,7 +13,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white font-sans">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-[1400px] mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-3xl font-bold mb-2">📋 Task Board</h1>
