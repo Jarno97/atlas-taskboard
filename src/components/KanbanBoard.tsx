@@ -252,7 +252,7 @@ export default function KanbanBoard() {
     return (
       <div className="flex flex-col sm:flex-row gap-3 pb-4 overflow-x-auto">
         {columns.map((col) => (
-          <div key={col.id} className="w-full sm:w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4 md:p-5 flex-shrink-0">
+          <div key={col.id} className="w-full sm:w-64 md:w-72 lg:w-80 bg-zinc-800/50 backdrop-blur-md rounded-xl p-4 md:p-5 flex-shrink-0">
             <div className="h-6 w-20 bg-zinc-700 rounded animate-pulse mb-4"></div>
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
@@ -319,7 +319,7 @@ export default function KanbanBoard() {
             key={column.id}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column.id)}
-            className={`w-full sm:flex-shrink-0 sm:w-64 md:w-72 lg:w-80 bg-zinc-800/50 rounded-xl p-4 md:p-5 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
+            className={`w-full sm:flex-shrink-0 sm:w-64 md:w-72 lg:w-80 bg-zinc-800/50 backdrop-blur-md rounded-xl p-4 md:p-5 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-white">{column.label}</h3>
@@ -352,7 +352,7 @@ export default function KanbanBoard() {
                     animate={{ opacity: 1, y: 0 }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`task-card bg-zinc-800 rounded-lg p-4 md:p-5 border border-zinc-700 hover:border-zinc-600 transition-colors cursor-grab active:cursor-grabbing group ${
+                    className={`task-card bg-zinc-800/80 backdrop-blur-sm rounded-lg p-4 md:p-5 border border-zinc-700 hover:border-zinc-600 transition-colors cursor-grab active:cursor-grabbing group ${
                       draggedTask === task.id ? "opacity-50" : ""
                     }`}
                   >

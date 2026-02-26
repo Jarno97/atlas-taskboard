@@ -13,7 +13,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-zinc-950 text-white font-sans bg-gradient-to-br from-zinc-900 to-zinc-950 overflow-x-hidden">
       <div className="max-w-[1800px] mx-auto px-4 md:px-6 py-6 md:py-8">
         {/* Header */}
         <header className="mb-6 md:mb-8">
