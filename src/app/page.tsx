@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import TaskList from "@/components/TaskList";
+import KanbanBoard from "@/components/KanbanBoard";
 import AddTask from "@/components/AddTask";
 
 export default function Home() {
@@ -12,8 +12,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-white font-sans">
-      <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-zinc-950 text-white font-sans">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-3xl font-bold mb-2">📋 Task Board</h1>
@@ -25,9 +25,9 @@ export default function Home() {
           <AddTask onAdd={handleAdd} />
         </section>
 
-        {/* Task List */}
+        {/* Kanban Board */}
         <section>
-          <TaskList key={refreshKey} />
+          <KanbanBoard key={refreshKey} />
         </section>
       </div>
     </div>
