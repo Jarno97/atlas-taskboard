@@ -26,10 +26,54 @@ const priorityColors = {
   low: "bg-green-500",
 };
 
+function ConfirmDialog({ 
+  isOpen, 
+  title, 
+  onConfirm, 
+  onCancel 
+}: { 
+  isOpen: boolean; 
+  title: string; 
+  onConfirm: () => void; 
+  onCancel: () => void;
+}) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onCancel}
+      />
+      <div className="relative bg-zinc-800 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-zinc-700">
+        <h3 className="text-lg font-semibold text-white mb-2">Delete task?</h3>
+        <p className="text-zinc-400 mb-6">
+          Are you sure you want to delete <span className="text-white font-medium">"{title}"</span>?
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={onCancel}
+            className="flex-1 px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function KanbanBoard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [draggedTask, setDraggedTask] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; id: string; title: string }>({ show: false, id: "", title: "" });
 
   const fetchTasks = async () => {
     const res = await fetch("/api/tasks");
@@ -51,11 +95,14 @@ export default function KanbanBoard() {
     fetchTasks();
   };
 
-  const deleteTask = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-      await fetch(`/api/tasks?id=${id}`, { method: "DELETE" });
-      fetchTasks();
-    }
+  const confirmDelete = (id: string, title: string) => {
+    setDeleteConfirm({ show: true, id, title });
+  };
+
+  const handleDelete = async () => {
+    await fetch(`/api/tasks?id=${deleteConfirm.id}`, { method: "DELETE" });
+    setDeleteConfirm({ show: false, id: "", title: "" });
+    fetchTasks();
   };
 
   const handleDragStart = (e: React.DragEvent, taskId: string) => {
@@ -85,72 +132,79 @@ export default function KanbanBoard() {
   if (loading) return <div className="p-4 text-zinc-400">Loading...</div>;
 
   return (
-    <div className={`flex flex-col lg:flex-row gap-4 pb-4 ${draggedTask ? 'overflow-visible' : 'overflow-x-auto'}`}>
-      {columns.map((column) => (
-        <div
-          key={column.id}
-          onDragOver={handleDragOver}
-          onDrop={(e) => handleDrop(e, column.id)}
-          className={`flex-shrink-0 w-full lg:w-72 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
-        >
-          {/* Column header */}
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-white">{column.label}</h3>
-            <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-1 rounded-full">
-              {tasks.filter((t) => t.status === column.id).length}
-            </span>
-          </div>
+    <>
+      <ConfirmDialog
+        isOpen={deleteConfirm.show}
+        title={deleteConfirm.title}
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteConfirm({ show: false, id: "", title: "" })}
+      />
 
-          {/* Tasks */}
-          <div className="space-y-3 min-h-[200px]">
-            {tasks
-              .filter((task) => task.status === column.id)
-              .map((task) => (
-                <div
-                  key={task.id}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, task.id)}
-                  className={`bg-zinc-800 rounded-lg p-4 border border-zinc-700 hover:border-zinc-600 transition-colors cursor-grab active:cursor-grabbing group ${
-                    draggedTask === task.id ? "opacity-50" : ""
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className={`w-2 h-2 rounded-full ${priorityColors[task.priority]} flex-shrink-0 mt-1.5`} />
-                    <span className="text-white text-sm font-medium flex-1">{task.title}</span>
-                    <button
-                      onClick={() => deleteTask(task.id)}
-                      className="text-zinc-500 hover:text-red-400 transition-opacity"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-0.5 rounded">
-                      {task.category}
-                    </span>
-                    <select
-                      value={task.status}
-                      onChange={(e) => updateStatus(task.id, e.target.value)}
-                      className="text-xs bg-transparent text-zinc-400 hover:text-white cursor-pointer ml-auto"
-                    >
-                      <option value="todo">To Do</option>
-                      <option value="in-progress">In Progress</option>
-                      <option value="review">Review</option>
-                      <option value="done">Done</option>
-                    </select>
-                  </div>
-                </div>
-              ))}
+      <div className={`flex flex-col lg:flex-row gap-4 pb-4 ${draggedTask ? 'overflow-visible' : 'overflow-x-auto'}`}>
+        {columns.map((column) => (
+          <div
+            key={column.id}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, column.id)}
+            className={`flex-shrink-0 w-full lg:w-72 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-white">{column.label}</h3>
+              <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-1 rounded-full">
+                {tasks.filter((t) => t.status === column.id).length}
+              </span>
+            </div>
 
-            {tasks.filter((t) => t.status === column.id).length === 0 && (
-              <p className="text-zinc-600 text-sm text-center py-8">No tasks</p>
-            )}
+            <div className="space-y-3 min-h-[200px]">
+              {tasks
+                .filter((task) => task.status === column.id)
+                .map((task) => (
+                  <div
+                    key={task.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, task.id)}
+                    className={`bg-zinc-800 rounded-lg p-4 border border-zinc-700 hover:border-zinc-600 transition-colors cursor-grab active:cursor-grabbing group ${
+                      draggedTask === task.id ? "opacity-50" : ""
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className={`w-2 h-2 rounded-full ${priorityColors[task.priority]} flex-shrink-0 mt-1.5`} />
+                      <span className="text-white text-sm font-medium flex-1">{task.title}</span>
+                      <button
+                        onClick={() => confirmDelete(task.id, task.title)}
+                        className="text-zinc-500 hover:text-red-400 transition-opacity"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-0.5 rounded">
+                        {task.category}
+                      </span>
+                      <select
+                        value={task.status}
+                        onChange={(e) => updateStatus(task.id, e.target.value)}
+                        className="text-xs bg-transparent text-zinc-400 hover:text-white cursor-pointer ml-auto"
+                      >
+                        <option value="todo">To Do</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="review">Review</option>
+                        <option value="done">Done</option>
+                      </select>
+                    </div>
+                  </div>
+                ))}
+
+              {tasks.filter((t) => t.status === column.id).length === 0 && (
+                <p className="text-zinc-600 text-sm text-center py-8">No tasks</p>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 }
