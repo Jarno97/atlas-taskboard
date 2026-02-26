@@ -51,6 +51,7 @@ export default function AddTask({ onAdd }: AddTaskProps) {
         className="bg-zinc-800 text-white rounded-lg px-3 py-2 border border-zinc-700 focus:outline-none"
       >
         <option value="general">General</option>
+        <option value="taskboard">Taskboard</option>
         <option value="website">Website</option>
         <option value="automation">Automation</option>
         <option value="research">Research</option>
