@@ -52,9 +52,10 @@ export default function KanbanBoard() {
   };
 
   const deleteTask = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this task?")) return;
-    await fetch(`/api/tasks?id=${id}`, { method: "DELETE" });
-    fetchTasks();
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      await fetch(`/api/tasks?id=${id}`, { method: "DELETE" });
+      fetchTasks();
+    }
   };
 
   const handleDragStart = (e: React.DragEvent, taskId: string) => {
