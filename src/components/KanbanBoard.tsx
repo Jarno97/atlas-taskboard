@@ -84,6 +84,10 @@ export default function KanbanBoard() {
 
   useEffect(() => {
     fetchTasks();
+    
+    // Auto-refresh every 5 seconds
+    const interval = setInterval(fetchTasks, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const updateStatus = async (id: string, status: string) => {
