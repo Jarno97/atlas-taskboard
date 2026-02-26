@@ -19,6 +19,10 @@ export const metadata: Metadata = {
   },
   description: "Collaborative task board for Atlas and Jarno. Track projects, automations, and research.",
   metadataBase: new URL("https://atlas-taskboard.vercel.app"),
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
   openGraph: {
     title: "Taskboard | Atlas & Jarno",
     description: "Collaborative task board for Atlas and Jarno",
