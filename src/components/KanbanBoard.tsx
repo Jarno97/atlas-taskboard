@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Task {
   id: string;
@@ -328,10 +329,14 @@ export default function KanbanBoard() {
                 })
                 .filter((task) => task.status === column.id)
                 .map((task) => (
-                  <div
+                  <motion.div
                     key={task.id}
                     draggable
-                    onDragStart={(e) => handleDragStart(e, task.id)}
+                    onDragStart={() => setDraggedTask(task.id)}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     className={`task-card bg-zinc-800 rounded-lg p-4 border border-zinc-700 hover:border-zinc-600 transition-colors cursor-grab active:cursor-grabbing group ${
                       draggedTask === task.id ? "opacity-50" : ""
                     }`}
@@ -384,7 +389,7 @@ export default function KanbanBoard() {
                         <option value="done" style={{ backgroundColor: '#3f3f46', color: '#d4d4d8' }}>Done</option>
                       </select>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
 
               {tasks.filter((t) => t.status === column.id).length === 0 && (
