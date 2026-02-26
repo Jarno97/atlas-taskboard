@@ -16,6 +16,7 @@ export async function getRedisClient() {
 }
 
 const TASK_KEY = "tasks";
+const ACTIVITY_KEY = "activity";
 
 export async function getTasks() {
   const client = await getRedisClient();
@@ -26,4 +27,29 @@ export async function getTasks() {
 export async function setTasks(tasks: any[]) {
   const client = await getRedisClient();
   await client.set(TASK_KEY, JSON.stringify(tasks));
+}
+
+export async function getActivity() {
+  const client = await getRedisClient();
+  const activity = await client.get(ACTIVITY_KEY);
+  return activity ? JSON.parse(activity) : [];
+}
+
+export async function addActivity(action: string, taskId: string, taskTitle: string, details: string) {
+  const client = await getRedisClient();
+  const activity = await getActivity();
+  
+  activity.unshift({
+    id: Date.now().toString(),
+    action,
+    taskId,
+    taskTitle,
+    details,
+    timestamp: new Date().toISOString(),
+  });
+  
+  // Keep only last 50
+  if (activity.length > 50) activity.pop();
+  
+  await client.set(ACTIVITY_KEY, JSON.stringify(activity));
 }

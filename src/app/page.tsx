@@ -3,6 +3,7 @@
 import { useState } from "react";
 import KanbanBoard from "@/components/KanbanBoard";
 import AddTask from "@/components/AddTask";
+import ActivityLog from "@/components/ActivityLog";
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -29,6 +30,9 @@ export default function Home() {
         <section>
           <KanbanBoard key={refreshKey} />
         </section>
+        
+        {/* Activity Log */}
+        <ActivityLog />
       </div>
     </div>
   );
