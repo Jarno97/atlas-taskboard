@@ -76,6 +76,8 @@ export default function KanbanBoard() {
   const [loading, setLoading] = useState(true);
   const [draggedTask, setDraggedTask] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; id: string; title: string }>({ show: false, id: "", title: "" });
+  const [filterAssignee, setFilterAssignee] = useState<"all" | "Atlas" | "Jarno">("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchTasks = async () => {
     const res = await fetch("/api/tasks");
@@ -149,6 +151,26 @@ export default function KanbanBoard() {
         onCancel={() => setDeleteConfirm({ show: false, id: "", title: "" })}
       />
 
+      {/* Search and Filter */}
+      <div className="flex items-center gap-3 mb-6">
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex-1 max-w-xs bg-zinc-800 text-white rounded-lg px-4 py-2 border border-zinc-700 focus:outline-none focus:border-zinc-500 text-sm"
+        />
+        <select
+          value={filterAssignee}
+          onChange={(e) => setFilterAssignee(e.target.value as any)}
+          className="bg-zinc-800 text-white rounded-lg px-3 py-2 border border-zinc-700 focus:outline-none text-sm"
+        >
+          <option value="all">All</option>
+          <option value="Atlas">My tasks</option>
+          <option value="Jarno">Jarno's</option>
+        </select>
+      </div>
+
       <div className="flex flex-nowrap gap-3 pb-4">
         {columns.map((column) => (
           <div
@@ -160,12 +182,20 @@ export default function KanbanBoard() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-white">{column.label}</h3>
               <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-1 rounded-full">
-                {tasks.filter((t) => t.status === column.id).length}
+                {tasks.filter((t) => t.status === column.id && (filterAssignee === "all" || t.assignee === filterAssignee) && (!searchQuery || t.title.toLowerCase().includes(searchQuery.toLowerCase()))).length}
               </span>
             </div>
 
             <div className="space-y-3 min-h-[200px]">
               {tasks
+                .filter((task) => {
+                  if (filterAssignee === "all") return true;
+                  return task.assignee === filterAssignee;
+                })
+                .filter((task) => {
+                  if (!searchQuery) return true;
+                  return task.title.toLowerCase().includes(searchQuery.toLowerCase());
+                })
                 .filter((task) => task.status === column.id)
                 .map((task) => (
                   <div
