@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface AddTaskProps {
   onAdd: () => void;
@@ -25,6 +26,7 @@ export default function AddTask({ onAdd }: AddTaskProps) {
     });
     setTitle("");
     setLoading(false);
+    toast.success("Task created!");
     onAdd();
   };
 

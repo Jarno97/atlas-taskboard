@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 
 interface Task {
   id: string;
@@ -195,6 +196,7 @@ export default function KanbanBoard() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, ...updates }),
     });
+    toast.success(`Task moved to ${status.replace('-', ' ')}`);
     fetchTasks();
   };
 
@@ -213,6 +215,7 @@ export default function KanbanBoard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: editTask.id, title, priority, category }),
       });
+      toast.success("Task updated");
       fetchTasks();
       setEditTask(null);
     }
@@ -220,6 +223,7 @@ export default function KanbanBoard() {
 
   const handleDelete = async () => {
     await fetch(`/api/tasks?id=${deleteConfirm.id}`, { method: "DELETE" });
+    toast.success("Task deleted");
     setDeleteConfirm({ show: false, id: "", title: "" });
     fetchTasks();
   };
