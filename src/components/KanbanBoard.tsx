@@ -344,15 +344,6 @@ export default function KanbanBoard() {
                       <span className="text-xs text-zinc-500 bg-zinc-700 px-2 py-0.5 rounded">
                         {task.category}
                       </span>
-                      {task.assignee && (
-                        <span className={`text-xs px-2 py-0.5 rounded font-medium ${
-                          task.assignee === "Atlas" 
-                            ? "bg-blue-500/20 text-blue-400" 
-                            : "bg-purple-500/20 text-purple-400"
-                        }`}>
-                          {task.assignee}
-                        </span>
-                      )}
                       <select
                         value={task.assignee || ""}
                         onChange={(e) => updateStatus(task.id, task.status, e.target.value as any)}
