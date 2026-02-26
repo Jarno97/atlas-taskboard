@@ -1,3 +1,14 @@
 {
-  "tasks": []
+  "tasks": [
+    {
+      "id": "1772098293324",
+      "title": "Build taskboard UI",
+      "description": "",
+      "status": "done",
+      "priority": "high",
+      "category": "general",
+      "created": "2026-02-26T09:31:33.324Z",
+      "updated": "2026-02-26T09:31:47.033Z"
+    }
+  ]
 }
