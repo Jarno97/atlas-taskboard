@@ -83,13 +83,13 @@ export default function KanbanBoard() {
   if (loading) return <div className="p-4 text-zinc-400">Loading...</div>;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 overflow-x-auto pb-4">
+    <div className={`flex flex-col lg:flex-row gap-4 pb-4 ${draggedTask ? 'overflow-visible' : 'overflow-x-auto'}`}>
       {columns.map((column) => (
         <div
           key={column.id}
           onDragOver={handleDragOver}
           onDrop={(e) => handleDrop(e, column.id)}
-          className={`flex-shrink-0 w-full lg:w-72 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color}`}
+          className={`flex-shrink-0 w-full lg:w-72 bg-zinc-800/50 rounded-xl p-4 border-t-4 ${column.color} ${draggedTask ? 'overflow-visible' : ''}`}
         >
           {/* Column header */}
           <div className="flex items-center justify-between mb-4">
